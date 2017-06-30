@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+    <script src="vuex.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <input v-model="total">
+    <mime :num-a="total"></mime>
+    <div style="color: red;">{{dis}}</div>
+    <div>0000---{{dos}}</div>
+    <conter></conter>S
+    <p>父组件：{{total}}</p>
+    <mime @increment="incrementTotal" ref="child" :num-a="total" num-s="total"></mime>
+    <button type="button" @click="clickref">调用子组件</button>
+</div>
+
+
+<template id="myInput">
+    <button @click="add">{{ count }}</button>
+</template>
+<script>
+
+    var store = new Vuex.Store({
+        state: {
+            count: 10
+        },
+        mutations: {
+            inc (state,n) {
+                state.count+=n;
+            },
+            in (state){
+                state.count++;
+            }
+        },
+        getters:{
+            done:function (state,getters) {
+                return  state.count+=1000;
+            }
+        }
+    });
+
+    var  Counter = {
+        template: `<div>{{ count }}</div>`,
+        computed: {
+            count () {
+                return store.state.count
+            }
+        }
+    }
+
+
+    new Vue({
+        el:'#app',
+        data :{
+            total: 0,
+        },
+        store:store,
+        methods:{
+            incrementTotal : function(){
+                this.total+=1
+            },
+            clickref:function(){
+                store.commit('in')
+                  this.total+=10;
+            }
+        },
+        computed:{
+            dis:function () {
+                return this.$store.state.count;
+            },
+            dos:function () {
+                return this.$store.getters.done;
+            }
+        },
+        components:{
+            'mime' :{
+                template:'#myInput',
+                data : function(){
+                    return{
+                        counter : 0
+                    }
+                },
+                props:['numA','numS'],
+                methods:{
+                    add : function(){
+                        this.$emit("increment")
+                        store.commit('inc',11)
+                    }
+                },
+                computed: {
+                    count () {
+                        return this.$store.state.count
+                    }
+                }
+            },
+        'conter': Counter
+        }
+    });
+
+    console.log(store.state.count)
+</script>
+</body>
+</html>

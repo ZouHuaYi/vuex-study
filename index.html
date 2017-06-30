@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+    <script src="vuex.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="onepage">{{msg}}</div>
+    <one-page :one="cout"  @inc="incremems"></one-page>
+    <tow-page :tow="cout" ref="ch"></tow-page>
+    <button  @click="incremems">点击一下</button>
+    <button @click="child">点击</button>
+</div>
+</body>
+<script>
+    var one=Vue.extend({
+        props:{
+            one:{
+                type:Number
+            }
+        },
+        data:function(){
+            return {
+                couter:9
+            }
+        },
+        template:"<div @click='add'>{{couter}}</div>",
+        methods:{
+            add:function () {
+                this.couter++;
+                this.$emit('inc')
+            }
+        }
+
+    })
+
+    var tow=Vue.extend({
+        props:{
+            tow:{
+                type:Number
+            }
+        },
+        methods:{
+          c:function () {
+              alert(11)
+          }
+        },
+        template:"<div>{{tow}}</div>"
+    })
+
+    var vm=new Vue({
+        el:"#app",
+        data:{
+            msg:"hello word",
+            cout:0
+        },
+        methods:{
+            incremems:function () {
+                this.cout+=1;
+            },
+            child:function () {
+                this.$refs.ch.c()
+            }
+
+        },
+        components:{
+            onePage:one,
+            towPage:tow
+        }
+    })
+
+</script>
+</html>
